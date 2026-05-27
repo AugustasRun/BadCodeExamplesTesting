@@ -4,25 +4,23 @@ namespace ConsoleApp1
 {
     internal sealed class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             UnsafeQuery("test", "test", "test");
         }
 
-        public static object UnsafeQuery(string connection, string name, string password)
+        public static object? UnsafeQuery(string connection, string name, string password)
         {
-            SqlConnection someConnection = new SqlConnection(connection);
-            using SqlCommand someCommand = new SqlCommand();
-            someCommand.Connection = someConnection;
+            using SqlConnection someConnection = new SqlConnection(connection);
+            using SqlCommand someCommand = new SqlCommand(
+                "SELECT AccountNumber FROM Users WHERE Username = @Username AND Password = @Password",
+                someConnection);
 
-            someCommand.CommandText = "SELECT AccountNumber FROM Users WHERE Username=@name AND Password=@password";
-            someCommand.Parameters.AddWithValue("@name", name);
-            someCommand.Parameters.AddWithValue("@password", password);
+            someCommand.Parameters.AddWithValue("@Username", name);
+            someCommand.Parameters.AddWithValue("@Password", password);
 
             someConnection.Open();
-            object accountNumber = someCommand.ExecuteScalar();
-            someConnection.Close();
-            return accountNumber;
+            return someCommand.ExecuteScalar();
         }
 
         public static void Math()
