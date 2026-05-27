@@ -6,28 +6,30 @@ namespace ConsoleApp1
     {
         static async Task Main(string[] args)
         {
-            UnsafeQuery("test", "test", "test");
+            _ = UnsafeQuery("test", "test", "test");
         }
 
         public static object UnsafeQuery(string connection, string name, string password)
         {
-            SqlConnection someConnection = new SqlConnection(connection);
-            using SqlCommand someCommand = new SqlCommand();
-            someCommand.Connection = someConnection;
+            using SqlConnection someConnection = new SqlConnection(connection);
+            using SqlCommand someCommand = someConnection.CreateCommand();
 
-            someCommand.CommandText = "SELECT AccountNumber FROM Users " +
-               "WHERE Username='" + name +
-               "' AND Password='" + password + "'";
+            someCommand.CommandText =
+                "SELECT AccountNumber FROM Users WHERE Username = @Username AND Password = @Password";
+
+            someCommand.Parameters.AddWithValue("@Username", name);
+            someCommand.Parameters.AddWithValue("@Password", password);
 
             someConnection.Open();
             object accountNumber = someCommand.ExecuteScalar();
-            someConnection.Close();
             return accountNumber;
         }
 
         public static void Math()
         {
             var number = 0;
+            number++;
+            number++;
             number++;
             number++;
             number++;
