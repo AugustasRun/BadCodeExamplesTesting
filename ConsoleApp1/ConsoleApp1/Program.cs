@@ -16,8 +16,10 @@ namespace ConsoleApp1
             someCommand.Connection = someConnection;
 
             someCommand.CommandText = "SELECT AccountNumber FROM Users " +
-               "WHERE Username='" + name +
-               "' AND Password='" + password + "'";
+               "WHERE Username=@name " +
+               "AND Password=@password";
+            someCommand.Parameters.AddWithValue("@name", name);
+            someCommand.Parameters.AddWithValue("@password", password);
 
             someConnection.Open();
             object accountNumber = someCommand.ExecuteScalar();
